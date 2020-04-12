@@ -1,114 +1,49 @@
-import 'package:belegbuster/containers/nfc.dart' as nfcmodule;
 import 'package:flutter/material.dart';
-import './services/dataservice.dart';
-import './containers/menu.dart';
-import './containers/settings.dart';
+import 'package:provider/provider.dart';
+import 'package:belegbusters/models/cart.dart';
+import 'package:belegbusters/models/catalog.dart';
+import 'package:belegbusters/containers/cart.dart';
+import 'package:belegbusters/containers/catalog.dart';
+import 'package:belegbusters/containers/main2.dart';
+import 'package:belegbusters/containers/login.dart';
+import 'package:belegbusters/themes/theme.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  var scrollController = ScrollController();
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Beleg Busters',
-        theme: ThemeData(
-          primarySwatch: Colors.orange,
-        ),
-        home: Home());
-  }
-}
-
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: DefaultTabController(
-        length: 4,
-        child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                expandedHeight: height / 4,
-                floating: false,
-                pinned: true,
-                snap: false,
-                actionsIconTheme: IconThemeData(opacity: 0.0),
-                flexibleSpace: Stack(
-                  children: <Widget>[
-                  Positioned.fill(
-                      child: Image.asset(
-                        "./images/Fruits.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
-                  TabBar(
-                    isScrollable: true,
-                    labelColor: Colors.black87,
-                    unselectedLabelColor: Colors.grey,
-                    tabs: [
-                      Tab(icon: Icon(Icons.fastfood),
-                       ),
-                      Tab(
-                        icon: Icon(Icons.nfc),
-                      ),
-                      Tab(
-                        icon: Icon(Icons.settings),
-                      ),
-                      Tab(
-                        icon: Icon(Icons.shopping_cart),
-                      ),
-                    ],
-                  ),
-                ),
-                pinned: true,
-              ),
-            ];
+    // Using MultiProvider is convenient when providing multiple objects.
+    return MultiProvider(
+      providers: [
+        // In this sample app, CatalogModel never changes, so a simple Provider
+        // is sufficient.
+        Provider(create: (context) => CatalogModel()),
+        // CartModel is implemented as a ChangeNotifier, which calls for the use
+        // of ChangeNotifierProvider. Moreover, CartModel depends
+        // on CatalogModel, so a ProxyProvider is needed.
+        ChangeNotifierProxyProvider<CatalogModel, CartModel>(
+          create: (context) => CartModel(),
+          update: (context, catalog, cart) {
+            cart.catalog = catalog;
+            return cart;
           },
-          body: TabBarView(
-            children: <Widget>[
-              MenuItems(),
-              nfcmodule.MyApp(),
-              AppSettings(),
-              DataService(),
-            ],
-          ),
         ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'test',
+        theme: appTheme,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => Login(),
+          '/main': (context) => MainBody(),
+          '/cart': (context) => MyCart(),
+          '/catalog': (context) => MyCatalog(),
+        },
       ),
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
-  final TabBar _tabBar;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return new Container(child: _tabBar, color: Colors.white);
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
   }
 }

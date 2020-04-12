@@ -1,4 +1,4 @@
-name: belegbuster
+name: belegbusters
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -24,10 +24,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   nfc_in_flutter: ^2.0.4
+  provider: ^3.0.0
+  
 dev_dependencies:
   flutter_launcher_icons: ^0.7.4
   http: ^0.12.0+4
   convert: ^2.1.1
+  english_words: ^3.1.0
   flutter_test:
     sdk: flutter
 
@@ -46,6 +49,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: fonts/Inter/Inter-Bold.otf
+          weight: 700
   assets:
     - images/Pasta.jpg
     - images/Burger.jpg

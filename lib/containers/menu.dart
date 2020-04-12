@@ -19,7 +19,7 @@ class MenuItems extends StatelessWidget {
                 child: Text('Beleg Buster Menu Item $index'),
               );
             },
-            childCount: 30,
+            childCount: 20,
           ),
         ),
       ],

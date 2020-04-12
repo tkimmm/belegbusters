@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
-class MyApp extends StatefulWidget {
+class RFIDReader extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<RFIDReader> {
   // _stream is a subscription to the stream returned by `NFC.read()`.
   // The subscription is stored in state so the stream can be canceled later
   StreamSubscription<NDEFMessage> _stream;
@@ -96,36 +96,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.black),
+          title: const Text(
+          'NFC Scanning',
+          style: TextStyle(fontSize: 14.0, color: Colors.black),
+          ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.white,
-          actions: <Widget>[
-            Builder(
-              builder: (context) {
-                if (!_supportsNFC) {
-                  return FlatButton(
-                    child: Text("NFC unsupported"),
-                    onPressed: null,
-                  );
-                }
-                return FlatButton(
-                  child:
-                      Text(_stream == null ? "Start reading" : "Stop reading"),
-                  onPressed: () {
-                    if (_stream == null) {
-                      _readNFC(context);
-                    } else {
-                      _stopReading();
-                    }
-                  },
-                );
-              },
-            ),
-          ],
+          backgroundColor: Colors.white12,
+          actions: <Widget>[],
         ),
-        // Render list of scanned tags
         body: ListView.builder(
           itemCount: _tags.length,
           itemBuilder: (context, index) {
@@ -178,6 +161,34 @@ class _MyAppState extends State<MyApp> {
             );
           },
         ),
+        bottomNavigationBar: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          child: Container(
+            height: 50.0,
+          ),
+        ),
+        floatingActionButton: Builder(
+          builder: (context) {
+            if (!_supportsNFC) {
+              return FlatButton(
+                child: Text("NFC unsupported"),
+                onPressed: null,
+              );
+            }
+            return FloatingActionButton(
+              child: _stream == null ? Icon(Icons.add) : Icon(Icons.swap_horiz),
+              backgroundColor: Colors.orange,
+              onPressed: () {
+                if (_stream == null) {
+                  _readNFC(context);
+                } else {
+                  _stopReading();
+                }
+              },
+            );
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
