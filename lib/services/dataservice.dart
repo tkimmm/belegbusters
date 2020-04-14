@@ -22,17 +22,17 @@ class User {
   final String phone_1;
   final String phone_2;
 
-  User({this.userId, this.name, this.surname, this.location, this.email, this.phone_1, this.phone_2});
+  User({this.name, this.surname, this.location, this.email, this.phone_1, this.phone_2, this.userId});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      userId: json['user_id'] as int,
       name: json['name'] as String,
       surname: json['surname'] as String,
       location: json['location'] as String,
       email: json['email'] as String,
       phone_1: json['phone_1'] as String,
-      phone_2: json['phone_2'] as String
+      phone_2: json['phone_2'] as String,
+      userId: json['user_id'] as int,
     );
   }
 }
@@ -91,7 +91,7 @@ class UserList extends StatelessWidget {
         if (index == 0){
           return Text('Postgres DB API REST Call (users table)', style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold));
         }
-        return Text(index.toString() + " " + users[index].name + " " + users[index].email);
+        return Text(index.toString() + " " + "RFID: " + users[index].userId.toString() + " " + users[index].name + " " + users[index].email);
       },
     );
   }
