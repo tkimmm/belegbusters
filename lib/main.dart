@@ -2,14 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:belegbusters/models/cart.dart';
 import 'package:belegbusters/models/catalog.dart';
-import 'package:belegbusters/containers/cart.dart';
-import 'package:belegbusters/containers/catalog.dart';
-import 'package:belegbusters/containers/main2.dart';
-import 'package:belegbusters/containers/login.dart';
 import 'package:belegbusters/themes/theme.dart';
+import 'package:belegbusters/router.dart' as router;
+// import 'package:belegbusters/containers/pdf/pdfpage.dart';
+import 'package:camera/camera.dart';
+import 'package:belegbusters/containers/tf/home.dart';
+import 'dart:async';
 
-void main() {
-  runApp(MyApp());
+// void main() {
+//   runApp(MyApp());
+// }
+List<CameraDescription> cameras;
+
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    cameras = await availableCameras();
+  } on CameraException catch (e) {
+    print('Error: $e.code\nError Message: $e.message');
+  }
+  runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -36,13 +48,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'test',
         theme: appTheme,
-        initialRoute: '/',
-        routes: {
-          '/': (context) => Login(),
-          '/main': (context) => MainBody(),
-          '/cart': (context) => MyCart(),
-          '/catalog': (context) => MyCatalog(),
-        },
+        onGenerateRoute: router.generateRoute,
       ),
     );
   }

@@ -1,7 +1,3 @@
-// Copyright 2019 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/material.dart';
 
 class CatalogModel {
@@ -20,8 +16,6 @@ class CatalogModel {
   ];
 
   /// Get item by [id].
-  ///
-  /// In this sample, the catalog is infinite, looping over [_itemNames].
   Item getById(int id) => Item(id, _itemNames[id % _itemNames.length], _paths[id % _itemNames.length]);
 
   /// Get item by its position in the catalog.

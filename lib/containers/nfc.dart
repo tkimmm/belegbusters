@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:nfc_in_flutter/nfc_in_flutter.dart';
 
@@ -12,44 +11,37 @@ class _MyAppState extends State<RFIDReader> {
   // _stream is a subscription to the stream returned by `NFC.read()`.
   // The subscription is stored in state so the stream can be canceled later
   StreamSubscription<NDEFMessage> _stream;
-
   // _tags is a list of scanned tags
   List<NDEFMessage> _tags = [];
-
   bool _supportsNFC = false;
-
+  // Errors are unlikely to happen on Android unless the NFC tags are
+  // poorly formatted or removed too soon, however on iOS at least one
+  // error is likely to happen. NFCUserCanceledSessionException will
+  // always happen unless you call readNDEF() with the `throwOnUserCancel`
+  // argument set to false.
+  // NFCSessionTimeoutException will be thrown if the session timer exceeds
+  // 60 seconds (iOS only).
+  // And then there are of course errors for unexpected stuff. Good fun!
   // _readNFC() calls `NFC.readNDEF()` and stores the subscription and scanned
   // tags in state
   void _readNFC(BuildContext context) {
     try {
       // ignore: cancel_subscriptions
-      StreamSubscription<NDEFMessage> subscription = NFC.readNDEF().listen(
-          (tag) {
-        print(tag);
-        // On new tag, add it to state
+      StreamSubscription<NDEFMessage> subscription =
+          NFC.readNDEF().listen((tag) {
+        print(tag.payload);
         setState(() {
           _tags.insert(0, tag);
+          _stopReading();
         });
-      },
-          // When the stream is done, remove the subscription from state
-          onDone: () {
+      }, onDone: () {
         setState(() {
           _stream = null;
         });
-      },
-          // Errors are unlikely to happen on Android unless the NFC tags are
-          // poorly formatted or removed too soon, however on iOS at least one
-          // error is likely to happen. NFCUserCanceledSessionException will
-          // always happen unless you call readNDEF() with the `throwOnUserCancel`
-          // argument set to false.
-          // NFCSessionTimeoutException will be thrown if the session timer exceeds
-          // 60 seconds (iOS only).
-          // And then there are of course errors for unexpected stuff. Good fun!
-          onError: (e) {
+      }, onError: (e) {
         setState(() {
           _stream = null;
         });
-
         if (!(e is NFCUserCanceledSessionException)) {
           showDialog(
             context: context,
@@ -69,7 +61,6 @@ class _MyAppState extends State<RFIDReader> {
     }
   }
 
-  // _stopReading() cancels the current reading stream
   void _stopReading() {
     _stream?.cancel();
     setState(() {
@@ -101,8 +92,8 @@ class _MyAppState extends State<RFIDReader> {
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
           title: const Text(
-          'NFC Scanning',
-          style: TextStyle(fontSize: 14.0, color: Colors.black),
+            'NFC Receipt Scanning',
+            style: TextStyle(fontSize: 14.0, color: Colors.black),
           ),
           centerTitle: true,
           elevation: 0,
@@ -116,14 +107,11 @@ class _MyAppState extends State<RFIDReader> {
               fontSize: 15,
               color: const Color(0xFF454545),
             );
-
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Text("NDEF Tag",
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   Builder(
                     builder: (context) {
                       // Build list of records
@@ -133,20 +121,46 @@ class _MyAppState extends State<RFIDReader> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "Record ${i + 1} - ${_tags[index].records[i].type}",
+                              "Transaction ${i + 1} - ${_tags[index].records[i].type}",
                               style: const TextStyle(
                                 fontSize: 13,
+                                fontWeight: FontWeight.bold,
                                 color: const Color(0xFF666666),
                               ),
                             ),
-                            Text(
-                              _tags[index].records[i].payload,
+                            Card(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  const ListTile(
+                                    leading: Icon(Icons.fastfood),
+                                    title:    Text(
+                              _tags[index].records[i].payload.toString(),
                               style: payloadTextStyle,
                             ),
-                            Text(
-                              _tags[index].records[i].data,
-                              style: payloadTextStyle,
+                                    subtitle: Text(
+                                        'Purchase date - 21.04.20'),
+                                  ),
+                                  ButtonBar(
+                                    children: <Widget>[
+                                      FlatButton(
+                                        child: const Text('BUY AGAIN'),
+                                        onPressed: () {/* ... */},
+                                      ),
+                                      FlatButton(
+                                        child: const Text('VIEW RECEIPT'),
+                                        onPressed: () {/* ... */},
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
+                         
+                            // Text(
+                            //   _tags[index].records[i].data,
+                            //   style: payloadTextStyle,
+                            // ),
                           ],
                         ));
                       }

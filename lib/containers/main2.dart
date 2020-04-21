@@ -1,4 +1,5 @@
 import 'package:belegbusters/containers/catalog.dart';
+import 'package:belegbusters/containers/pdf/pdfpage.dart';
 import 'package:flutter/material.dart';
 import 'package:belegbusters/containers/nfc.dart' as nfcmodule;
 import 'package:belegbusters/services/dataservice.dart';
@@ -33,7 +34,7 @@ class _HomeState extends State<Home> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: DefaultTabController(
-        length: 6,
+        length: 7,
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
@@ -62,7 +63,7 @@ class _HomeState extends State<Home> {
                     unselectedLabelColor: Colors.grey,
                     tabs: [
                       Tab(
-                      icon: Icon(Icons.local_dining),
+                        icon: Icon(Icons.local_dining),
                       ),
                       Tab(
                         icon: Icon(Icons.local_dining),
@@ -78,6 +79,9 @@ class _HomeState extends State<Home> {
                       ),
                       Tab(
                         icon: Icon(Icons.shopping_cart),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.camera),
                       ),
                     ],
                   ),
@@ -95,7 +99,16 @@ class _HomeState extends State<Home> {
                 child: nfcmodule.RFIDReader(),
               ),
               DataService(),
-              MyCart()
+              MyCart(),
+              PdfPageTest(),
+              // Center(
+              //   child: FlatButton(
+              //     child: Text('go ml'),
+              //     onPressed: () {
+              //       Navigator.pushReplacementNamed(context, '/ml');
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),

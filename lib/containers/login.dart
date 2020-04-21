@@ -34,7 +34,14 @@ class Login extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/main');
                 },
-              )
+              ),
+              RaisedButton(
+                color: Colors.orange,
+                child: Text('Machine Vision - Test'),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/ml');
+                },
+              ),
             ],
           ),
         ),
