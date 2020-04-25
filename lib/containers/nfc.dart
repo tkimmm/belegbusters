@@ -128,35 +128,10 @@ class _MyAppState extends State<RFIDReader> {
                                 color: const Color(0xFF666666),
                               ),
                             ),
-                            Card(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const ListTile(
-                                    leading: Icon(Icons.fastfood),
-                                    title:    Text(
+                            Text(
                               _tags[index].records[i].payload.toString(),
                               style: payloadTextStyle,
-                            ),
-                                    subtitle: Text(
-                                        'Purchase date - 21.04.20'),
-                                  ),
-                                  ButtonBar(
-                                    children: <Widget>[
-                                      FlatButton(
-                                        child: const Text('BUY AGAIN'),
-                                        onPressed: () {/* ... */},
-                                      ),
-                                      FlatButton(
-                                        child: const Text('VIEW RECEIPT'),
-                                        onPressed: () {/* ... */},
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                         
+                            )
                             // Text(
                             //   _tags[index].records[i].data,
                             //   style: payloadTextStyle,
